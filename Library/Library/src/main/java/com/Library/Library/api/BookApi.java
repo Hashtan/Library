@@ -1,8 +1,11 @@
 package com.Library.Library.api;
 
 import com.Library.Library.dao.entity.Book;
+import com.Library.Library.dao.repo.BookRepo;
 import com.Library.Library.manager.BookManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -11,6 +14,7 @@ import java.util.Optional;
 @RequestMapping("/api/books")
 public class BookApi {
     private BookManager books;
+    private BookRepo bookRepo;
 
     @Autowired
     public BookApi(BookManager books) {

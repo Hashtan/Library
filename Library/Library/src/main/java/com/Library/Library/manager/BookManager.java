@@ -34,17 +34,4 @@ public class BookManager {
     public void deleteById (Long id){
         bookRepo.deleteById(id);
     }
-
-    @EventListener(ApplicationReadyEvent.class)
-    public void fillDB(){
-        Book book1 = new Book ("tytułtestowy1", "autordlajaj", LocalDate.of(2022, 12, 30));
-        Book book2 = new Book ("Boston", "Mariusz Max Kolonko", LocalDate.of(2013, 10, 7));
-        User user = new User("Oskar");
-        Borrowing borrowing1 = new Borrowing(book1, user);
-        save(book1); save(book2);
-
-
     }
-
-
-}

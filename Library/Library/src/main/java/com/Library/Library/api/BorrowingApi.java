@@ -3,12 +3,15 @@ package com.Library.Library.api;
 import com.Library.Library.dao.entity.Borrowing;
 import com.Library.Library.manager.BorrowingManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/borrowing")
+@RequestMapping("/api/borrowings")
 public class BorrowingApi {
     private BorrowingManager borrowings;
 
@@ -23,23 +26,39 @@ public class BorrowingApi {
     }
 
     @PostMapping
-    public Borrowing addBook(@RequestBody Borrowing borrowing) {
+    public Borrowing addBorrow(@RequestBody Borrowing borrowing) {
         return borrowings.save(borrowing);
     }
 
     @PutMapping
-    public Borrowing updateBook(@RequestBody Borrowing borrowing) {
+    public Borrowing updateBorrow(@RequestBody Borrowing borrowing) {
         return borrowings.save(borrowing);
     }
 
     @DeleteMapping
-    public void deleteBook(@RequestParam Long index) {
+    public void deleteBorrow(@RequestParam Long index) {
         borrowings.deleteById(index);
     }
 
-    @GetMapping
+    @GetMapping("/findbyid")
     public Optional<Borrowing> getById(@RequestParam Long index) {
         return borrowings.findById(index);
+    }
+    @GetMapping("/findbyuserid")
+    public Iterable<Borrowing> getBorrowByUserId(@RequestParam Long index){
+        return borrowings.findByUserId(index);
+    }
+    @GetMapping("/findbybookid")
+    public Iterable<Borrowing> getBorrowByBookId(@RequestParam Long index){
+        return borrowings.findByBookId(index);
+    }
+    @GetMapping("/getactivestatus/all")
+    public Iterable<Borrowing> getAllActive (){
+        return borrowings.findAllActive();
+   }
+    @GetMapping("/getactivestatus")
+    public Iterable<Borrowing> getActiveById(@RequestParam Long index) {
+        return borrowings.findActiveByUserId(index);
     }
 }
 
