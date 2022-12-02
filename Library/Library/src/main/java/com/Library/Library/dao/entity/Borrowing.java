@@ -30,7 +30,6 @@ public class Borrowing {
     public Borrowing(Book book, User user) {
         this.book = book;
         this.user = user;
-        this.book.setActiveStatus(false);
     }
 }
 

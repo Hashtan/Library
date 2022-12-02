@@ -17,16 +17,15 @@ public class Book {
     private String author;
     private LocalDate writtenYear;
 
-    private boolean activeStatus;
+    private boolean activeStatus = true;
 
     public Book() {
     }
 
-    public Book(String title, String author, LocalDate writtenYear, boolean activeStatus) {
+    public Book(String title, String author, LocalDate writtenYear) {
         this.title = title;
         this.author = author;
         this.writtenYear = writtenYear;
-        this.activeStatus = true;
     }
 
     public Book(String author, LocalDate writtenYear) {
