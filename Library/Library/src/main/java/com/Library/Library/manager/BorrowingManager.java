@@ -1,6 +1,5 @@
 package com.Library.Library.manager;
 
-import com.Library.Library.dao.entity.Book;
 import com.Library.Library.dao.entity.Borrowing;
 import com.Library.Library.dao.repo.BorrowingRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,17 @@ public class BorrowingManager {
         borrowing.setBorrowStart(LocalDate.now());
         borrowing.setExpectedReturnDate(LocalDate.now().plusMonths(3));
         borrowing.getBook().setActiveStatus(false);
+        return borrowingRepo.save(borrowing);
+    }
+    public Borrowing update(Borrowing borrowing) {
+        return borrowingRepo.save(borrowing);
+    }
+    public Borrowing returnBookById(Long id) {
+        Optional<Borrowing> returnBorrowing = findById(id);
+        Borrowing borrowing = returnBorrowing.stream().findFirst().orElse(null);
+        assert borrowing != null;
+        borrowing.setBorrowEnd(LocalDate.now());
+        borrowing.getBook().setActiveStatus(true);
         return borrowingRepo.save(borrowing);
     }
 

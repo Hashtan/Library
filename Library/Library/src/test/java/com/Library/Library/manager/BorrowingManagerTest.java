@@ -4,30 +4,32 @@ import com.Library.Library.dao.entity.Book;
 import com.Library.Library.dao.entity.Borrowing;
 import com.Library.Library.dao.entity.User;
 import com.Library.Library.dao.repo.BorrowingRepo;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BorrowingManagerTest {
 
     @Mock
     private BorrowingRepo borrowingRepo;
-
+    @InjectMocks
     private BorrowingManager underTest;
 
-    @BeforeEach
-    void setUp() {
-        underTest = new BorrowingManager(borrowingRepo);
+    public Borrowing init (){
+        Book book = new Book();
+        User user = new User();
+        return new Borrowing(book, user);
     }
-
     @Test
     void shouldGetAllBorrowings() {
         //when
@@ -41,9 +43,7 @@ class BorrowingManagerTest {
     @Test
     void shouldAddBorrowing() {
         //given
-        Book book = new Book();
-        User user = new User();
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
 
         //when
         underTest.save(borrowing);
@@ -52,15 +52,17 @@ class BorrowingManagerTest {
         ArgumentCaptor<Borrowing> argumentCaptor = ArgumentCaptor.forClass(Borrowing.class);
         verify(borrowingRepo).save(argumentCaptor.capture());
         Borrowing capturedBorrowing = argumentCaptor.getValue();
+        assertThat(capturedBorrowing.getBorrowStart()).isEqualTo(LocalDate.now());
+        assertThat(capturedBorrowing.getExpectedReturnDate()).isEqualTo(LocalDate.now().plusMonths(3));
+        assertThat(capturedBorrowing.getBook().isActiveStatus()).isFalse();
         assertThat(capturedBorrowing).isEqualTo(borrowing);
+
     }
 
     @Test
     void deleteById() {
         //given
-        Book book = new Book();
-        User user = new User();
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
         borrowing.setId(10L);
         underTest.save(borrowing);
 
@@ -75,11 +77,8 @@ class BorrowingManagerTest {
     @Test
     void shouldGetAllBorrowingsById(){
         //given
-        Book book = new Book();
-        User user = new User();
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
         borrowing.setId(10L);
-        underTest.save(borrowing);
 
         //when
         underTest.findById(borrowing.getId());
@@ -94,47 +93,40 @@ class BorrowingManagerTest {
     @Test
     void shouldGetAllBorrowingsByUserId() {
         //given
-        Book book = new Book();
-        User user = new User();
-        user.setId(10L);
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
+        borrowing.getUser().setId(10L);
         underTest.save(borrowing);
 
         //when
-        underTest.findByUserId(user.getId());
+        underTest.findByUserId(borrowing.getUser().getId());
 
         //then
         ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
         verify(borrowingRepo).findByUserId(argumentCaptor.capture());
         Long capturedId = argumentCaptor.getValue();
-        assertThat(capturedId).isEqualByComparingTo(user.getId());
-
+        assertThat(capturedId).isEqualByComparingTo(borrowing.getUser().getId());
     }
     @Test
     void shouldGetAllBorrowingsByBookId() {
         //given
-        Book book = new Book();
-        User user = new User();
-        book.setId(10L);
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
+        borrowing.getBook().setId(10L);
         underTest.save(borrowing);
 
         //when
-        underTest.findByBookId(book.getId());
+        underTest.findByBookId(borrowing.getBook().getId());
 
         //then
         ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
         verify(borrowingRepo).findByBookId(argumentCaptor.capture());
         Long capturedId = argumentCaptor.getValue();
-        assertThat(capturedId).isEqualByComparingTo(book.getId());
+        assertThat(capturedId).isEqualByComparingTo(borrowing.getBook().getId());
 
     }
     @Test
     void shouldGetAllActiveBorrowings() {
         //given
-        Book book = new Book();
-        User user = new User();
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
         underTest.save(borrowing);
 
         //when
@@ -148,20 +140,35 @@ class BorrowingManagerTest {
     @Test
     void shouldGetAllActiveBorrowingsByUserId() {
         //given
-        Book book = new Book();
-        User user = new User();
-        user.setId(10L);
-        Borrowing borrowing = new Borrowing(book, user);
+        Borrowing borrowing = init();
+        borrowing.getUser().setId(10L);
         underTest.save(borrowing);
 
         //when
-        underTest.findActiveByUserId(user.getId());
+        underTest.findActiveByUserId(borrowing.getUser().getId());
 
         //then
-        ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor <Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
         verify(borrowingRepo).findByUserIdAndBorrowEndNull(argumentCaptor.capture());
         Long capturedId = argumentCaptor.getValue();
-        assertThat(capturedId).isEqualByComparingTo(user.getId());
+        assertThat(capturedId).isEqualByComparingTo(borrowing.getUser().getId());
         assertThat(borrowing.getBorrowEnd()).isNull();
+    }
+
+    @Test
+    void shouldReturnBookById() {
+        //given
+        Borrowing borrowing = init();
+        borrowing.setId(10L);
+        when(borrowingRepo.save(borrowing)).thenReturn(borrowing);
+        when(borrowingRepo.findById(borrowing.getId())).thenReturn(Optional.of(borrowing));
+
+        //when
+        Borrowing capturedBorrowing = underTest.returnBookById(borrowing.getId());
+
+        //then
+        assertThat(capturedBorrowing.getBorrowEnd()).isEqualTo(LocalDate.now());
+        assertThat(capturedBorrowing.getBook().isActiveStatus()).isTrue();
+        assertThat(capturedBorrowing).isEqualTo(borrowing);
     }
 }

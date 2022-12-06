@@ -15,20 +15,15 @@ public class Book {
     private Long id;
     private String title;
     private String author;
-    private LocalDate writtenYear;
+    private int writtenYear;
 
     private boolean activeStatus = true;
 
     public Book() {
     }
 
-    public Book(String title, String author, LocalDate writtenYear) {
+    public Book(String title, String author, int writtenYear) {
         this.title = title;
-        this.author = author;
-        this.writtenYear = writtenYear;
-    }
-
-    public Book(String author, LocalDate writtenYear) {
         this.author = author;
         this.writtenYear = writtenYear;
     }
