@@ -1,5 +1,6 @@
 package com.Library.Library.dao.entity;
 
+import com.Library.Library.dao.AppUser.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -13,52 +13,52 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/borrowings")
 public class BorrowingApi {
-    private BorrowingManager borrowings;
+    private BorrowingManager borrowingManager;
 
     @Autowired
     public BorrowingApi(BorrowingManager borrowings) {
-        this.borrowings = borrowings;
+        this.borrowingManager = borrowings;
     }
 
     @GetMapping("/all")
     public Iterable<Borrowing> getAll() {
-        return borrowings.findAll();
+        return borrowingManager.findAll();
     }
 
     @PostMapping
     public Borrowing addBorrow(@RequestBody Borrowing borrowing) {
-        return borrowings.save(borrowing);
+        return borrowingManager.save(borrowing);
     }
 
     @PutMapping
     public Borrowing updateBorrow(@RequestBody Borrowing borrowing) {
-        return borrowings.save(borrowing);
+        return borrowingManager.save(borrowing);
     }
 
     @DeleteMapping
     public void deleteBorrow(@RequestParam Long index) {
-        borrowings.deleteById(index);
+        borrowingManager.deleteById(index);
     }
 
     @GetMapping("/findbyid")
     public Optional<Borrowing> getById(@RequestParam Long index) {
-        return borrowings.findById(index);
+        return borrowingManager.findById(index);
     }
     @GetMapping("/findbyuserid")
     public Iterable<Borrowing> getBorrowByUserId(@RequestParam Long index){
-        return borrowings.findByUserId(index);
+        return borrowingManager.findByUserId(index);
     }
     @GetMapping("/findbybookid")
     public Iterable<Borrowing> getBorrowByBookId(@RequestParam Long index){
-        return borrowings.findByBookId(index);
+        return borrowingManager.findByBookId(index);
     }
     @GetMapping("/getactivestatus/all")
     public Iterable<Borrowing> getAllActive (){
-        return borrowings.findAllActive();
+        return borrowingManager.findAllActive();
    }
     @GetMapping("/getactivestatus")
     public Iterable<Borrowing> getActiveById(@RequestParam Long index) {
-        return borrowings.findActiveByUserId(index);
+        return borrowingManager.findActiveByUserId(index);
     }
 }
 

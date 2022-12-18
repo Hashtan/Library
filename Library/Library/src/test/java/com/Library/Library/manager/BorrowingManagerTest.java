@@ -1,8 +1,8 @@
 package com.Library.Library.manager;
 
+import com.Library.Library.dao.AppUser.User;
 import com.Library.Library.dao.entity.Book;
 import com.Library.Library.dao.entity.Borrowing;
-import com.Library.Library.dao.entity.User;
 import com.Library.Library.dao.repo.BorrowingRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
